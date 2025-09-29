@@ -6,7 +6,7 @@ Frontend of Automobile service management system with real-time tracking and rol
 
 ```bash
 # Clone repository
-git clone https://github.com/Renuja-7671/MyMechAutocare.git
+git clone https://github.com/Renuja-7671/MyMechAutocareFrontend.git
 
 # Install frontend dependencies
 cd MyMechAutocareFrontend
