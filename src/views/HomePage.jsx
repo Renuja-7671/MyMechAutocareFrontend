@@ -226,7 +226,7 @@ const HomePage = () => {
         <Container>
           <div className="text-center mb-5">
             <h2 className="fw-bold mb-3">Our Services</h2>
-            <p className="text-muted">Comprehensive automotive solutions for every need</p>
+            <p className="text-muted">Automotive solutions for every need</p>
           </div>
           <Row className="g-4">
             <Col md={6} lg={4}>
