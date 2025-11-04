@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap'
 import { useNavigate, Link } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaSignInAlt, FaCar } from 'react-icons/fa';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import authService from '../../services/authService';
+import { useAuth } from '../../hooks/useAuth'; // Use the useAuth hook instead of authService
 import NavbarComponent from '../common/Navbar';
 
 const Login = () => {
@@ -15,6 +15,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth(); // Use the login function from useAuth
 
   const handleChange = (e) => {
     setFormData({
@@ -30,23 +31,26 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await authService.login(formData);
+      // Use the login function from the AuthContext instead of authService
+      const result = await login(formData);
       
-      switch (response.user.role) {
-        case 'customer':
-          navigate('/customer/dashboard');
-          break;
-        case 'employee':
-          navigate('/employee/dashboard');
-          break;
-        case 'admin':
-          navigate('/admin/dashboard');
-          break;
-        default:
-          navigate('/');
+      if (result.success) {
+        switch (result.user.role) {
+          case 'customer':
+            navigate('/customer/dashboard');
+            break;
+          case 'employee':
+            navigate('/employee/dashboard');
+            break;
+          case 'admin':
+            navigate('/admin/dashboard');
+            break;
+          default:
+            navigate('/');
+        }
       }
     } catch (err) {
-      setError(err.error || 'Login failed. Please try again.');
+      setError(err.message || err.error || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }

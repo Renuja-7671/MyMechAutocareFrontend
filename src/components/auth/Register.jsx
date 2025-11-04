@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaLock, FaPhone, FaUserPlus, FaEye, FaEyeSlash } from 'react-icons/fa';
-import authService from '../../services/authService';
+import { useAuth } from '../../hooks/useAuth';
+import { showSuccess, showError } from '../../utils/toast';
 import NavbarComponent from '../common/Navbar';
 
 const Register = () => {
@@ -21,6 +22,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -42,10 +44,12 @@ const Register = () => {
     setError('');
 
     try {
-      await authService.register(formData);
-      navigate('/login', { state: { message: 'Registration successful! Please login.' } });
+      await register(formData);
+      showSuccess('Registration successful! Please login.');
+      navigate('/login');
     } catch (err) {
-      setError(err.error || err.errors?.[0]?.msg || 'Registration failed');
+      setError(err.message || err.error || err.errors?.[0]?.msg || 'Registration failed');
+      showError('Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }

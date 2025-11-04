@@ -9,6 +9,8 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 .gradient-bg {
@@ -37,4 +39,89 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .card {
+    margin-bottom: 15px;
+  }
+  
+  .btn {
+    white-space: nowrap;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .d-flex-mobile-column {
+    flex-direction: column;
+  }
+  
+  .text-center-mobile {
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .p-5 {
+    padding: 1.5rem !important;
+  }
+  
+  .py-5 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+  
+  .px-5 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+  
+  .gap-3 {
+    gap: 1rem;
+  }
+  
+  .fs-3 {
+    font-size: 1.5rem;
+  }
+  
+  .fs-4 {
+    font-size: 1.25rem;
+  }
+}
+
+/* Utility classes */
+.w-100-mobile {
+  width: 100%;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.min-vh-100 {
+  min-height: 100vh;
+}
+
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.border-0 {
+  border: 0 !important;
+}
+
+.rounded-4 {
+  border-radius: 1rem !important;
 }

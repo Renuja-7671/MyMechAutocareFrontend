@@ -1,46 +1,99 @@
-# MyMech Autocare
+# MyMech Autocare - Automobile Service Time Logging & Appointment System
 
-Frontend of Automobile service management system with real-time tracking and role-based dashboards.
+A complete React frontend for an enterprise web application that digitalizes automobile service center operations with three main user roles: Customer, Employee, and Administrator.
 
-## Installation
+## Features Implemented
 
-```bash
-# Clone repository
-git clone https://github.com/Renuja-7671/MyMechAutocareFrontend.git
+### Authentication & Authorization
+- JWT-based authentication with localStorage storage
+- Role-based protected routes (Customer, Employee, Admin)
+- Login and registration pages with form validation
+- Employee registration (admin-only)
 
-# Install frontend dependencies
-cd MyMechAutocareFrontend
-npm install
+### User Roles & Dashboards
+
+#### Customer
+- Dashboard with profile information and quick actions
+- Appointment management (book, view, track progress)
+- Vehicle management
+- Service history tracking
+- Real-time notifications
+
+#### Employee
+- Dashboard with task assignments and work logs
+- Service progress tracking and updates
+- Time logging functionality
+- Real-time messaging with customers
+- Work history tracking
+
+#### Administrator
+- System overview dashboard with analytics
+- User management (CRUD operations)
+- Service management
+- Performance reports
+- Audit logs
+- System status monitoring
+
+### Core Functionality
+- Real-time WebSocket communication for service updates
+- AI Chatbot with conversation history
+- Toast notifications for user feedback
+- Responsive design for mobile and desktop
+- Loading states and error handling
+- Service booking and management
+- Profile management
+
+### Technical Implementation
+- React with Vite
+- React Router v6 for navigation
+- Bootstrap 5 for UI components
+- Context API for state management
+- Axios for HTTP requests
+- Socket.io-client for real-time communication
+- React Hook Form for form validation
+- React Hot Toast for notifications
+
+## Folder Structure
+```
+src/
+├── api/                 # API service files
+├── components/          # Reusable UI components
+├── context/             # React Context providers
+├── hooks/               # Custom React hooks
+├── pages/               # Page components
+├── utils/               # Utility functions
+├── views/               # Dashboard views
+├── App.jsx             # Main app component
+├── main.jsx            # Entry point
+├── router.jsx          # Router configuration
+└── index.css           # Global styles
 ```
 
-## Setup
-Create `frontend/.env`:
-```env
-VITE_API_URL=http://localhost:5000/api
-```
+## API Endpoints Integrated
+- Authentication: `/api/auth/register`, `/api/auth/login`
+- User Profile: `/api/user/me`
+- Customer: `/api/customer/appointments`, `/api/customer/modification`
+- Employee: `/api/employee/services`, `/api/employee/logs`, `/api/employee/update/:id`
+- Admin: `/api/admin/dashboard`, `/api/admin/users`, `/api/admin/services`, `/api/admin/reports`
+- Chatbot: `/api/chatbot/query`
+- Notifications: `/api/notifications`
 
-## Run
+## Real-time Features
+- Service status updates via WebSocket
+- Live chat messaging
+- Real-time notifications
+- Progress tracking
 
-```bash
+## Development Setup
+1. Install dependencies: `npm install`
+2. Start development server: `npm run dev`
+3. Build for production: `npm run build`
 
-# Terminal 1 - Frontend
-cd MyMechAutocareFrontend
-npm run dev
-```
-If the frontend is running on port 5173, 
-Then visit: `http://localhost:5173`
-
-## Test Accounts
-
-- Customer: john.doe@email.com / password123
-- Employee: mike.johnson@autoservice.com / password123
-- Admin: admin@autoservice.com / password123
-
-## Tech Stack
-
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
-![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge&logo=express)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
+## Technologies Used
+- React 18+
+- React Router v6
+- Bootstrap 5
+- Socket.io-client
+- Axios
+- React Hot Toast
+- React Icons

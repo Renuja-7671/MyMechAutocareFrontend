@@ -1,39 +1,60 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button, Table, Badge } from 'react-bootstrap';
-import { FaUsers, FaCalendarCheck, FaUserTie, FaDollarSign, FaUsersCog, FaTools, FaChartBar, FaCog, FaUserPlus } from 'react-icons/fa';
+import { FaUsers, FaCalendarCheck, FaUserTie, FaDollarSign, FaUsersCog, FaTools, FaChartBar, FaCog, FaUserPlus, FaBell, FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import NavbarComponent from '../components/common/Navbar';
 import StatCard from '../components/common/StatCard';
-import authService from '../services/authService';
+import Loader from '../components/Loader';
 
 const AdminDashboard = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
+  // const [users, setUsers] = useState([]); // Will be used for user management
+  const [services, setServices] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    appointments: 0,
+    employees: 0,
+    revenue: 0
+  });
+
+  // Mock data
+  // const mockUsers = [
+  //   { id: 1, name: 'John Doe', email: 'john.doe@email.com', role: 'customer', status: 'active' },
+  //   { id: 2, name: 'Jane Smith', email: 'jane.smith@email.com', role: 'customer', status: 'active' },
+  //   { id: 3, name: 'Mike Johnson', email: 'mike.johnson@autoservice.com', role: 'employee', status: 'active' },
+  //   { id: 4, name: 'Sarah Davis', email: 'sarah.davis@autoservice.com', role: 'employee', status: 'active' },
+  //   { id: 5, name: 'Admin User', email: 'admin@autoservice.com', role: 'admin', status: 'active' }
+  // ];
+
+  const mockAppointments = [
+    { id: 1, customer: 'John Doe', vehicle: 'Toyota Camry', service: 'Oil Change', date: 'Oct 5, 2025', status: 'scheduled' },
+    { id: 2, customer: 'Jane Smith', vehicle: 'Ford F-150', service: 'Brake Inspection', date: 'Oct 6, 2025', status: 'confirmed' }
+  ];
 
   useEffect(() => {
-    loadProfile();
+    // Load mock data
+    setStats({
+      totalUsers: 5,
+      appointments: 2,
+      employees: 2,
+      revenue: 1250
+    });
+    // In a real app, we would setUsers(mockUsers);
+    // For now, we're just storing it for future use
+    setAppointments(mockAppointments);
+    
+    setServices([
+      { id: 1, name: 'Oil Change', price: 49.99, category: 'Maintenance' },
+      { id: 2, name: 'Brake Inspection', price: 79.99, category: 'Safety' },
+      { id: 3, name: 'Engine Diagnostic', price: 99.99, category: 'Diagnostic' }
+    ]);
   }, []);
 
-  const loadProfile = async () => {
-    try {
-      const data = await authService.getProfile();
-      setUser(data.user);
-    } catch (error) {
-      console.error('Failed to load profile:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100">
-        <div className="spinner-border text-danger" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Loader fullScreen message="Loading dashboard..." />;
   }
 
   return (
@@ -51,7 +72,7 @@ const AdminDashboard = () => {
             <StatCard
               icon={<FaUsers />}
               title="Total Users"
-              value="5"
+              value={stats.totalUsers}
               iconBg="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
             />
           </Col>
@@ -59,7 +80,7 @@ const AdminDashboard = () => {
             <StatCard
               icon={<FaCalendarCheck />}
               title="Appointments"
-              value="2"
+              value={stats.appointments}
               iconBg="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
             />
           </Col>
@@ -67,7 +88,7 @@ const AdminDashboard = () => {
             <StatCard
               icon={<FaUserTie />}
               title="Employees"
-              value="2"
+              value={stats.employees}
               iconBg="linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"
             />
           </Col>
@@ -75,7 +96,7 @@ const AdminDashboard = () => {
             <StatCard
               icon={<FaDollarSign />}
               title="Revenue"
-              value="$0"
+              value={`$${stats.revenue}`}
               iconBg="linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
             />
           </Col>
@@ -88,6 +109,21 @@ const AdminDashboard = () => {
                 <h5 className="mb-0 fw-bold">Recent Appointments</h5>
               </Card.Header>
               <Card.Body>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className="d-flex align-items-center">
+                    <FaSearch className="text-muted me-2" />
+                    <input 
+                      type="text" 
+                      className="form-control form-control-sm" 
+                      placeholder="Search appointments..." 
+                      style={{ width: '200px' }}
+                    />
+                  </div>
+                  <Button variant="outline-primary" size="sm">
+                    <FaBell className="me-1" /> Notifications
+                  </Button>
+                </div>
+                
                 <Table responsive hover>
                   <thead>
                     <tr>
@@ -96,23 +132,35 @@ const AdminDashboard = () => {
                       <th>Service</th>
                       <th>Date</th>
                       <th>Status</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>John Doe</td>
-                      <td>Toyota Camry</td>
-                      <td>Oil Change</td>
-                      <td>Oct 5, 2025</td>
-                      <td><Badge bg="warning">Scheduled</Badge></td>
-                    </tr>
-                    <tr>
-                      <td>Jane Smith</td>
-                      <td>Ford F-150</td>
-                      <td>Brake Inspection</td>
-                      <td>Oct 6, 2025</td>
-                      <td><Badge bg="success">Confirmed</Badge></td>
-                    </tr>
+                    {appointments.map((appointment) => (
+                      <tr key={appointment.id}>
+                        <td>{appointment.customer}</td>
+                        <td>{appointment.vehicle}</td>
+                        <td>{appointment.service}</td>
+                        <td>{appointment.date}</td>
+                        <td>
+                          <Badge bg={
+                            appointment.status === 'scheduled' ? 'warning' :
+                            appointment.status === 'confirmed' ? 'success' :
+                            appointment.status === 'completed' ? 'primary' : 'secondary'
+                          }>
+                            {appointment.status}
+                          </Badge>
+                        </td>
+                        <td>
+                          <Button variant="outline-primary" size="sm" className="me-1">
+                            View
+                          </Button>
+                          <Button variant="outline-danger" size="sm">
+                            Cancel
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               </Card.Body>
@@ -185,27 +233,15 @@ const AdminDashboard = () => {
                 <h5 className="mb-0 fw-bold">Top Services</h5>
               </Card.Header>
               <Card.Body>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div>
-                    <strong>Oil Change</strong>
-                    <div className="text-muted small">Maintenance</div>
+                {services.map((service) => (
+                  <div key={service.id} className="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                      <strong>{service.name}</strong>
+                      <div className="text-muted small">{service.category}</div>
+                    </div>
+                    <Badge bg="primary">${service.price}</Badge>
                   </div>
-                  <Badge bg="primary">$49.99</Badge>
-                </div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div>
-                    <strong>Brake Inspection</strong>
-                    <div className="text-muted small">Safety</div>
-                  </div>
-                  <Badge bg="primary">$79.99</Badge>
-                </div>
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <strong>Engine Diagnostic</strong>
-                    <div className="text-muted small">Diagnostic</div>
-                  </div>
-                  <Badge bg="primary">$99.99</Badge>
-                </div>
+                ))}
               </Card.Body>
             </Card>
           </Col>
@@ -218,15 +254,24 @@ const AdminDashboard = () => {
               <Card.Body>
                 <div className="mb-3">
                   <small className="text-muted">2 hours ago</small>
-                  <div>New customer registered: John Doe</div>
+                  <div>
+                    <span className="badge bg-success me-1">User</span>
+                    New customer registered: John Doe
+                  </div>
                 </div>
                 <div className="mb-3">
                   <small className="text-muted">3 hours ago</small>
-                  <div>Appointment scheduled for Oct 5</div>
+                  <div>
+                    <span className="badge bg-primary me-1">Appointment</span>
+                    Appointment scheduled for Oct 5
+                  </div>
                 </div>
                 <div>
                   <small className="text-muted">5 hours ago</small>
-                  <div>New employee added: Mike Johnson</div>
+                  <div>
+                    <span className="badge bg-info me-1">Employee</span>
+                    New employee added: Mike Johnson
+                  </div>
                 </div>
               </Card.Body>
             </Card>
