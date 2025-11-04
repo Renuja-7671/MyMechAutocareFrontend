@@ -28,13 +28,38 @@ export const AuthProvider = ({ children }) => {
     return { success: true, user: foundUser };
   };
 
+  const register = async (userData) => {
+    // Check if user already exists
+    const existingUser = mockUsers.find(u => u.email === userData.email);
+    if (existingUser) {
+      throw new Error('User already exists with this email');
+    }
+
+    // Create new user (only customers can register)
+    const newUser = {
+      email: userData.email,
+      password: userData.password,
+      role: 'customer',
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      phone: userData.phone,
+      address: userData.address
+    };
+
+    // Add to mock users (in a real app, this would be an API call)
+    mockUsers.push(newUser);
+
+    // For mock purposes, we'll just return success
+    return { success: true };
+  };
+
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);
   };
 
-  const value = { user, isAuthenticated, login, logout };
+  const value = { user, isAuthenticated, login, logout, register };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
