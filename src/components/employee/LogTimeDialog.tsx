@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { employeeAPI } from '../../lib/supabase-api';
+import { employeeAPI } from '../../lib/api';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Input } from '../ui/input';

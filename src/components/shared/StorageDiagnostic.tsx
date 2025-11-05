@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { supabase } from '../../lib/supabase-client';
+import apiClient from '../../lib/api-client';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
@@ -11,124 +11,20 @@ export function StorageDiagnostic() {
 
   const runDiagnostics = async () => {
     setIsChecking(true);
-    const diagnosticResults: any = {
-      timestamp: new Date().toISOString(),
-      checks: [],
-    };
-
     try {
-      // Check 1: User Authentication
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      diagnosticResults.checks.push({
-        name: 'User Authentication',
-        status: user ? 'pass' : 'fail',
-        message: user 
-          ? `✅ User authenticated: ${user.email}` 
-          : '❌ No user authenticated. Please log in.',
-        details: authError ? `Error: ${authError.message}` : null,
-      });
-
-      // Check 2: List Buckets
-      try {
-        const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
-        const vehicleImagesBucket = buckets?.find(b => b.id === 'vehicle-images');
-        
-        diagnosticResults.checks.push({
-          name: 'Vehicle Images Bucket',
-          status: vehicleImagesBucket ? 'pass' : 'fail',
-          message: vehicleImagesBucket
-            ? `✅ Bucket exists: ${vehicleImagesBucket.name} (${vehicleImagesBucket.public ? 'Public' : 'Private'})`
-            : '❌ Bucket "vehicle-images" not found',
-          details: bucketsError ? `Error: ${bucketsError.message}` : null,
-        });
-      } catch (err: any) {
-        diagnosticResults.checks.push({
-          name: 'Vehicle Images Bucket',
-          status: 'error',
-          message: '❌ Error checking buckets',
-          details: err.message,
-        });
-      }
-
-      // Check 3: Try to upload a test file
-      if (user) {
-        try {
-          const testFile = new File(['test'], 'test.txt', { type: 'text/plain' });
-          const testFileName = `test_${Date.now()}.txt`;
-          
-          const { error: uploadError } = await supabase.storage
-            .from('vehicle-images')
-            .upload(testFileName, testFile, { upsert: true });
-
-          if (uploadError) {
-            diagnosticResults.checks.push({
-              name: 'Upload Permission',
-              status: 'fail',
-              message: '❌ Upload failed - RLS policies missing or incorrect',
-              details: uploadError.message,
-            });
-          } else {
-            diagnosticResults.checks.push({
-              name: 'Upload Permission',
-              status: 'pass',
-              message: '✅ Upload successful - RLS policies configured correctly',
-              details: 'Test file uploaded successfully',
-            });
-
-            // Clean up test file
-            await supabase.storage.from('vehicle-images').remove([testFileName]);
-          }
-        } catch (err: any) {
-          diagnosticResults.checks.push({
-            name: 'Upload Permission',
-            status: 'error',
-            message: '❌ Upload test failed',
-            details: err.message,
-          });
-        }
-      } else {
-        diagnosticResults.checks.push({
-          name: 'Upload Permission',
-          status: 'skip',
-          message: '⚠️ Skipped - User not authenticated',
-          details: 'Cannot test upload without authentication',
-        });
-      }
-
-      // Check 4: Database columns
-      try {
-        const { data, error } = await supabase
-          .from('vehicles')
-          .select('exterior_image_1, exterior_image_2, interior_image')
-          .limit(1);
-
-        diagnosticResults.checks.push({
-          name: 'Database Columns',
-          status: error ? 'fail' : 'pass',
-          message: error 
-            ? '❌ Image columns missing from vehicles table'
-            : '✅ Image columns exist in vehicles table',
-          details: error ? error.message : 'Columns: exterior_image_1, exterior_image_2, interior_image',
-        });
-      } catch (err: any) {
-        diagnosticResults.checks.push({
-          name: 'Database Columns',
-          status: 'error',
-          message: '❌ Error checking database columns',
-          details: err.message,
-        });
-      }
-
+      const response = await apiClient.get('/admin/storage-diagnostics');
+      setResults(response.data);
     } catch (error: any) {
-      diagnosticResults.checks.push({
-        name: 'General Error',
-        status: 'error',
-        message: '❌ Unexpected error during diagnostics',
-        details: error.message,
+      setResults({
+        timestamp: new Date().toISOString(),
+        checks: [{
+          name: 'API Connection',
+          status: 'error',
+          message: '❌ Failed to connect to backend API',
+          details: error.message,
+        }]
       });
     }
-
-    setResults(diagnosticResults);
     setIsChecking(false);
   };
 

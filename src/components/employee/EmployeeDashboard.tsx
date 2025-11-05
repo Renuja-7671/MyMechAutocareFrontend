@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { employeeAPI } from '../../lib/supabase-api';
+import { employeeAPI } from '../../lib/api';
 import { formatStatusText } from '../../lib/types';
 import { Header } from '../shared/Header';
 import { Button } from '../ui/button';

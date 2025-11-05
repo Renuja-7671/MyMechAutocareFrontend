@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase-client';
+import apiClient from '../../lib/api-client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { toast } from 'sonner@2.0.3';
@@ -14,32 +14,12 @@ export function EmployeeDebugPage() {
   const loadData = async () => {
     setLoading(true);
     try {
-      // Get all users
-      const { data: usersData, error: usersError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('role', 'employee')
-        .order('id');
-
-      if (usersError) {
-        console.error('Users error:', usersError);
-      } else {
-        console.log('Users:', usersData);
-        setUsers(usersData || []);
-      }
-
-      // Get all employees
-      const { data: employeesData, error: employeesError } = await supabase
-        .from('employees')
-        .select('*')
-        .order('id');
-
-      if (employeesError) {
-        console.error('Employees error:', employeesError);
-      } else {
-        console.log('Employees:', employeesData);
-        setEmployees(employeesData || []);
-      }
+      const response = await apiClient.get('/admin/employee-debug');
+      setUsers(response.data.users || []);
+      setEmployees(response.data.employees || []);
+    } catch (error: any) {
+      console.error('Error loading data:', error);
+      toast.error('Failed to load debug data');
     } finally {
       setLoading(false);
     }
@@ -48,43 +28,12 @@ export function EmployeeDebugPage() {
   const fixMissingProfiles = async () => {
     setFixing(true);
     try {
-      const missingProfiles = users.filter(
-        user => !employees.find(emp => emp.user_id === user.id)
-      );
-
-      if (missingProfiles.length === 0) {
-        toast.info('No missing employee profiles found');
-        return;
-      }
-
-      console.log('Creating profiles for:', missingProfiles);
-
-      // Create missing employee profiles
-      const newEmployees = missingProfiles.map(user => ({
-        user_id: user.id,
-        first_name: 'Employee',
-        last_name: user.email.split('@')[0],
-        phone: '',
-        hire_date: new Date().toISOString().split('T')[0],
-        updated_at: new Date().toISOString(),
-      }));
-
-      const { data, error } = await supabase
-        .from('employees')
-        .insert(newEmployees)
-        .select();
-
-      if (error) {
-        console.error('Error creating profiles:', error);
-        toast.error(`Failed to create profiles: ${error.message}`);
-      } else {
-        console.log('Created profiles:', data);
-        toast.success(`Created ${data?.length || 0} employee profiles`);
-        await loadData(); // Reload data
-      }
+      const response = await apiClient.post('/admin/fix-missing-profiles');
+      toast.success(`Created ${response.data.count || 0} employee profiles`);
+      await loadData(); // Reload data
     } catch (error: any) {
       console.error('Exception:', error);
-      toast.error(`Error: ${error.message}`);
+      toast.error(`Error: ${error.response?.data?.message || error.message}`);
     } finally {
       setFixing(false);
     }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { adminAPI } from '../../lib/supabase-api';
+import { adminAPI } from '../../lib/api';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';

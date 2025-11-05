@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../lib/auth-context';
-import { authAPI } from '../../lib/supabase-api';
+import { authAPI } from '../../lib/api';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { PasswordInput } from '../ui/password-input';

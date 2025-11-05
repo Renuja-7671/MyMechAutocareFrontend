@@ -1,176 +1,341 @@
-// API Service Layer - Replace BASE_URL with your Express.js backend URL
-// For development, you can change this to your backend URL directly
-const BASE_URL = 'http://localhost:5000/api';
+import { authService } from '../services/auth';
+import { vehicleService } from '../services/vehicles';
+import { appointmentService } from '../services/appointments';
+import { employeeService } from '../services/employees';
+import { projectService } from '../services/projects';
+import { adminService } from '../services/admin';
+import { chatbotService } from '../services/chatbot';
 
-// API Response type
-interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
-
-// Generic API call function
-async function apiCall<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<ApiResponse<T>> {
-  const token = localStorage.getItem('authToken');
-  
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-    ...options.headers,
+// Helper function for error handling
+const handleApiError = (error: any) => {
+  console.error('API error:', error);
+  return {
+    success: false,
+    error: error.response?.data?.message || error.message || 'An error occurred',
   };
+};
 
+// Get current user from localStorage
+const getCurrentUser = (): any | null => {
   try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      ...options,
-      headers,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: data.message || 'An error occurred',
-      };
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      return JSON.parse(storedUser);
     }
-
-    return {
-      success: true,
-      data: data.data || data,
-    };
   } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Network error',
-    };
+    console.error('Error getting current user:', error);
   }
-}
+  return null;
+};
 
 // Auth API
 export const authAPI = {
-  login: (email: string, password: string) =>
-    apiCall('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    }),
-  
-  signup: (data: { email: string; password: string; name: string; phone: string; role: string }) =>
-    apiCall('/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-  
-  logout: () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userId');
+  login: async (email: string, password: string) => {
+    try {
+      const data = await authService.login({ email, password });
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  signup: async (signupData: {
+    email: string;
+    password: string;
+    name: string;
+    phone: string;
+    role: string;
+  }) => {
+    try {
+      await authService.signup(signupData);
+      return { success: true };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  logout: async () => {
+    try {
+      await authService.logout();
+      localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+    } catch (error) {
+      // Even if API call fails, clear local storage
+      localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+    }
   },
 };
 
 // Customer API
 export const customerAPI = {
-  getServiceProgress: () => apiCall('/customer/services'),
-  
-  bookAppointment: (data: {
-    vehicleId: string;
-    serviceType: string;
-    preferredDate: string;
-    preferredTime: string;
-    description: string;
-  }) =>
-    apiCall('/customer/appointments', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-  
-  requestModification: (data: {
-    vehicleId: string;
-    modificationDetails: string;
-    estimatedBudget: number;
-  }) =>
-    apiCall('/customer/modifications', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-  
-  getVehicles: () => apiCall('/customer/vehicles'),
-  
-  addVehicle: (data: {
+  getServiceProgress: async () => {
+    try {
+      const data = await appointmentService.getServiceProgress();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getVehicles: async () => {
+    try {
+      const data = await vehicleService.fetchVehicles();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  addVehicle: async (vehicleData: {
     make: string;
     model: string;
     year: number;
     licensePlate: string;
     vin?: string;
-  }) =>
-    apiCall('/customer/vehicles', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-  
-  getAppointments: () => apiCall('/customer/appointments'),
-  
-  chatbotCheckSlots: (date: string, serviceType: string) =>
-    apiCall(`/customer/chatbot/slots?date=${date}&serviceType=${serviceType}`),
+    exteriorImages?: File[];
+    interiorImage?: File;
+  }) => {
+    try {
+      const data = await vehicleService.createVehicle(vehicleData);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getVehicleServiceHistory: async (vehicleId: string) => {
+    try {
+      const data = await vehicleService.getVehicleServiceHistory(vehicleId);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  bookAppointment: async (appointmentData: {
+    vehicleId: string;
+    serviceType: string;
+    preferredDate: string;
+    preferredTime: string;
+    description: string;
+  }) => {
+    try {
+      const data = await appointmentService.createAppointment(appointmentData);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getAppointments: async () => {
+    try {
+      const data = await appointmentService.fetchAppointments();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  requestModification: async (modData: {
+    vehicleId: string;
+    modificationDetails: string;
+    estimatedBudget: number;
+  }) => {
+    try {
+      const data = await projectService.createModificationRequest(modData);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  chatbotCheckSlots: async (date: string, serviceType: string) => {
+    try {
+      const data = await chatbotService.checkSlots(date, serviceType);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getMyModificationRequests: async () => {
+    try {
+      const data = await projectService.getMyModificationRequests();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  deleteModificationRequest: async (requestId: string) => {
+    try {
+      await projectService.deleteModificationRequest(requestId);
+      return { success: true };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
 };
 
 // Employee API
 export const employeeAPI = {
-  getAssignedServices: () => apiCall('/employee/services'),
-  
-  logTime: (data: {
+  getAssignedServices: async () => {
+    try {
+      const data = await employeeService.getAssignedServices();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  logTime: async (timeData: {
     serviceId: string;
     hours: number;
     description: string;
     date: string;
-  }) =>
-    apiCall('/employee/time-logs', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-  
-  updateServiceStatus: (serviceId: string, status: string, notes?: string) =>
-    apiCall(`/employee/services/${serviceId}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status, notes }),
-    }),
-  
-  getUpcomingAppointments: () => apiCall('/employee/appointments/upcoming'),
-  
-  getTimeLogs: (serviceId?: string) =>
-    apiCall(`/employee/time-logs${serviceId ? `?serviceId=${serviceId}` : ''}`),
+  }) => {
+    try {
+      const data = await employeeService.logTime(timeData);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  updateServiceStatus: async (serviceId: string, status: string, progress: number, notes?: string) => {
+    try {
+      const data = await employeeService.updateServiceStatus(serviceId, status, progress, notes);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getUpcomingAppointments: async () => {
+    try {
+      const data = await appointmentService.getUpcomingAppointments();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getTimeLogs: async (serviceId?: string) => {
+    try {
+      const data = await employeeService.getTimeLogs(serviceId);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
 };
 
 // Admin API
 export const adminAPI = {
-  getAllUsers: () => apiCall('/admin/users'),
-  
-  updateUserRole: (userId: string, role: string) =>
-    apiCall(`/admin/users/${userId}/role`, {
-      method: 'PATCH',
-      body: JSON.stringify({ role }),
-    }),
-  
-  deleteUser: (userId: string) =>
-    apiCall(`/admin/users/${userId}`, {
-      method: 'DELETE',
-    }),
-  
-  getAllServices: () => apiCall('/admin/services'),
-  
-  getAllAppointments: () => apiCall('/admin/appointments'),
-  
-  assignServiceToEmployee: (serviceId: string, employeeId: string) =>
-    apiCall(`/admin/services/${serviceId}/assign`, {
-      method: 'PATCH',
-      body: JSON.stringify({ employeeId }),
-    }),
-  
-  getReports: (type: string, startDate?: string, endDate?: string) =>
-    apiCall(`/admin/reports/${type}?startDate=${startDate}&endDate=${endDate}`),
-  
-  getDashboardStats: () => apiCall('/admin/dashboard/stats'),
+  getAllUsers: async () => {
+    try {
+      const data = await adminService.getAllUsers();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  updateUserRole: async (userId: string, role: string) => {
+    try {
+      const data = await adminService.updateUserRole(userId, role);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  deleteUser: async (userId: string) => {
+    try {
+      await adminService.deleteUser(userId);
+      return { success: true };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getAllServices: async () => {
+    try {
+      const data = await adminService.getAllServices();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  assignServiceToEmployee: async (serviceId: string, employeeId: string) => {
+    try {
+      const data = await adminService.assignServiceToEmployee(serviceId, employeeId);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getAllAppointments: async () => {
+    try {
+      const data = await appointmentService.getAllAppointments();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getReports: async (type: string, startDate?: string, endDate?: string) => {
+    try {
+      const data = await adminService.getReports(type, startDate, endDate);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getDashboardStats: async () => {
+    try {
+      const data = await adminService.getDashboardStats();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  addEmployee: async (employeeData: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    position?: string;
+  }) => {
+    try {
+      const data = await employeeService.createEmployee(employeeData);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  getAllModificationRequests: async () => {
+    try {
+      const data = await projectService.getAllModificationRequests();
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  updateModificationStatus: async (projectId: string, status: string, approvedCost?: number) => {
+    try {
+      const data = await projectService.updateModificationStatus(projectId, status, approvedCost);
+      return { success: true, data };
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
 };

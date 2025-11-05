@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase-client';
+import { vehicleService } from '../../services/vehicles';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Loader2, Image as ImageIcon } from 'lucide-react';
@@ -37,27 +37,10 @@ export function VehicleImagesDialog({
   const loadImages = async () => {
     setIsLoading(true);
     try {
-      // Get signed URLs for each image
-      if (vehicle.exterior_image_1) {
-        const { data } = await supabase.storage
-          .from('vehicle-images')
-          .createSignedUrl(vehicle.exterior_image_1, 3600); // 1 hour expiry
-        if (data) setExteriorImage1Url(data.signedUrl);
-      }
-
-      if (vehicle.exterior_image_2) {
-        const { data } = await supabase.storage
-          .from('vehicle-images')
-          .createSignedUrl(vehicle.exterior_image_2, 3600);
-        if (data) setExteriorImage2Url(data.signedUrl);
-      }
-
-      if (vehicle.interior_image) {
-        const { data } = await supabase.storage
-          .from('vehicle-images')
-          .createSignedUrl(vehicle.interior_image, 3600);
-        if (data) setInteriorImageUrl(data.signedUrl);
-      }
+      const imageData = await vehicleService.getVehicleImages(vehicle.id);
+      if (imageData.exterior_image_1) setExteriorImage1Url(imageData.exterior_image_1);
+      if (imageData.exterior_image_2) setExteriorImage2Url(imageData.exterior_image_2);
+      if (imageData.interior_image) setInteriorImageUrl(imageData.interior_image);
     } catch (error) {
       console.error('Error loading vehicle images:', error);
     } finally {

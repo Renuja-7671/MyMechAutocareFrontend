@@ -5,7 +5,7 @@ import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { Calendar, Clock, IndianRupee, Wrench, User, Package, FileText } from 'lucide-react';
-import { customerAPI } from '../../lib/supabase-api';
+import { customerAPI } from '../../lib/api';
 import { formatStatusText } from '../../lib/types';
 import { toast } from 'sonner@2.0.3';
 
