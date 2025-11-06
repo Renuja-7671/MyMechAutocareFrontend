@@ -5,12 +5,11 @@ import { Header } from '../shared/Header';
 import { useAuth } from '../../lib/auth-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Users, ClipboardList, Calendar, TrendingUp, BarChart3, Bug, Wrench } from 'lucide-react';
+import { Users, ClipboardList, Calendar, TrendingUp, BarChart3, Wrench } from 'lucide-react';
 import { UserManagement } from './UserManagement';
 import { ServiceManagement } from './ServiceManagement';
 import { AppointmentManagement } from './AppointmentManagement';
 import { ReportsView } from './ReportsView';
-import { EmployeeDebugPage } from './EmployeeDebugPage';
 import { ModificationRequestsManagement } from './ModificationRequestsManagement';
 
 interface DashboardStats {
@@ -136,10 +135,6 @@ export function AdminDashboard() {
               Modifications
             </TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
-            <TabsTrigger value="debug" className="gap-2">
-              <Bug className="h-4 w-4" />
-              Debug
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
@@ -160,10 +155,6 @@ export function AdminDashboard() {
 
           <TabsContent value="reports">
             <ReportsView />
-          </TabsContent>
-
-          <TabsContent value="debug">
-            <EmployeeDebugPage />
           </TabsContent>
         </Tabs>
       </div>

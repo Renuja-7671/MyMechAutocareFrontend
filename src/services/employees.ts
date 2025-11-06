@@ -19,12 +19,12 @@ export interface EmployeeData {
 export const employeeService = {
   getAssignedServices: async () => {
     const response = await apiClient.get('/employees/assigned-services');
-    return response.data;
+    return response.data.data; // Backend returns { success: true, data: [...] }
   },
 
   logTime: async (data: TimeLogData) => {
     const response = await apiClient.post('/employees/time-logs', data);
-    return response.data;
+    return response.data.data; // Backend returns { success: true, data: {...} }
   },
 
   updateServiceStatus: async (serviceId: string, status: string, progress: number, notes?: string) => {
@@ -33,23 +33,23 @@ export const employeeService = {
       progress,
       notes
     });
-    return response.data;
+    return response.data.data; // Backend returns { success: true, data: {...} }
   },
 
   getTimeLogs: async (serviceId?: string) => {
     const response = await apiClient.get('/employees/time-logs', {
       params: serviceId ? { serviceId } : undefined
     });
-    return response.data;
+    return response.data.data; // Backend returns { success: true, data: [...] }
   },
 
   getAvailableEmployees: async () => {
     const response = await apiClient.get('/employees/available');
-    return response.data;
+    return response.data; // This endpoint might return data directly
   },
 
   createEmployee: async (data: EmployeeData) => {
-    const response = await apiClient.post('/employees', data);
-    return response.data;
+    const response = await apiClient.post('/admin/employees', data);
+    return response.data.data; // Backend returns { success: true, data: {...} }
   },
 };

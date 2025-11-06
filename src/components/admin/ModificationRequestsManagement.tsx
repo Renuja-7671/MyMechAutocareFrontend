@@ -88,15 +88,16 @@ export function ModificationRequestsManagement() {
       return;
     }
 
-    // If approving, validate approved cost
+    // If approving, validate actual cost
     if (newStatus === 'approved') {
       if (!approvedCost || parseFloat(approvedCost) <= 0) {
-        toast.error('Please enter a valid approved budget');
+        toast.error('Please enter the actual cost for this modification');
         return;
       }
     }
 
-    const approvedCostValue = newStatus === 'approved' ? parseFloat(approvedCost) : undefined;
+    // Send approved cost if provided (even if not approving)
+    const approvedCostValue = approvedCost && parseFloat(approvedCost) > 0 ? parseFloat(approvedCost) : undefined;
     const response = await adminAPI.updateModificationStatus(
       selectedRequest.id, 
       newStatus, 
@@ -191,9 +192,9 @@ export function ModificationRequestsManagement() {
                           <div className="space-y-1">
                             <p><strong>Customer:</strong> {request.customerName} ({request.customerPhone})</p>
                             <p><strong>Vehicle:</strong> {request.vehicleName} - {request.licensePlate}</p>
-                            <p><strong>Estimated Budget:</strong> Rs. {request.estimatedCost.toLocaleString()}</p>
+                            <p><strong>Customer Estimated Budget:</strong> Rs. {request.estimatedCost.toLocaleString()}</p>
                             {request.approvedCost && (
-                              <p><strong>Approved Budget:</strong> <span className="text-green-600 dark:text-green-400">Rs. {request.approvedCost.toLocaleString()}</span></p>
+                              <p><strong>Actual Cost (Shop Quote):</strong> <span className="text-green-600 dark:text-green-400">Rs. {request.approvedCost.toLocaleString()}</span></p>
                             )}
                             <p><strong>Requested:</strong> {new Date(request.createdAt).toLocaleDateString()}</p>
                           </div>
@@ -227,7 +228,8 @@ export function ModificationRequestsManagement() {
                         onClick={() => {
                           setSelectedRequest(request);
                           setNewStatus(request.status || 'pending');
-                          setApprovedCost(request.estimatedCost.toString());
+                          // Use approved cost if available, otherwise use estimated cost
+                          setApprovedCost(request.approvedCost ? request.approvedCost.toString() : request.estimatedCost.toString());
                           setShowStatusDialog(true);
                         }}
                       >
@@ -271,12 +273,12 @@ export function ModificationRequestsManagement() {
                   <p className="text-sm mt-1">{selectedRequest.licensePlate}</p>
                 </div>
                 <div>
-                  <Label>Estimated Budget</Label>
+                  <Label>Customer Estimated Budget</Label>
                   <p className="text-sm mt-1">Rs. {selectedRequest.estimatedCost.toLocaleString()}</p>
                 </div>
                 {selectedRequest.approvedCost && (
                   <div>
-                    <Label>Approved Budget</Label>
+                    <Label>Actual Cost (Shop Quote)</Label>
                     <p className="text-sm mt-1 text-green-600 dark:text-green-400">
                       Rs. {selectedRequest.approvedCost.toLocaleString()}
                     </p>
@@ -331,6 +333,27 @@ export function ModificationRequestsManagement() {
               </p>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="approvedCost">Actual Cost (Shop Quote) {newStatus === 'approved' && '*'}</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">Rs.</span>
+                <Input
+                  id="approvedCost"
+                  type="number"
+                  placeholder="Enter actual cost"
+                  value={approvedCost}
+                  onChange={(e) => setApprovedCost(e.target.value)}
+                  className="pl-10"
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+              <p className="text-xs text-gray-500">
+                {newStatus === 'approved'
+                  ? 'Required when approving - Enter the actual cost quoted by the shop'
+                  : 'Optional - Enter the actual cost quoted by the shop (can be set later)'}
+              </p>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="status">New Status</Label>
               <Select value={newStatus} onValueChange={setNewStatus}>
                 <SelectTrigger id="status">
@@ -345,27 +368,6 @@ export function ModificationRequestsManagement() {
                 </SelectContent>
               </Select>
             </div>
-            {newStatus === 'approved' && (
-              <div className="space-y-2">
-                <Label htmlFor="approvedCost">Approved Budget *</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">Rs.</span>
-                  <Input
-                    id="approvedCost"
-                    type="number"
-                    placeholder="Enter approved budget"
-                    value={approvedCost}
-                    onChange={(e) => setApprovedCost(e.target.value)}
-                    className="pl-10"
-                    min="0"
-                    step="0.01"
-                  />
-                </div>
-                <p className="text-xs text-gray-500">
-                  Enter the actual approved budget for this modification
-                </p>
-              </div>
-            )}
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={() => setShowStatusDialog(false)} className="flex-1">

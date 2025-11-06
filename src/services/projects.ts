@@ -23,12 +23,12 @@ export const projectService = {
   },
 
   getAllModificationRequests: async () => {
-    const response = await apiClient.get('/projects');
+    const response = await apiClient.get('/admin/modifications');
     return response.data.data; // Return just the data array
   },
 
   updateModificationStatus: async (projectId: string, status: string, approvedCost?: number) => {
-    const response = await apiClient.patch(`/projects/${projectId}`, {
+    const response = await apiClient.patch(`/admin/modifications/${projectId}`, {
       status,
       approvedCost
     });

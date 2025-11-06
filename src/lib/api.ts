@@ -293,7 +293,7 @@ export const adminAPI = {
 
   getAllAppointments: async () => {
     try {
-      const data = await appointmentService.getAllAppointments();
+      const data = await adminService.getAllAppointments();
       return { success: true, data };
     } catch (error) {
       return handleApiError(error);
