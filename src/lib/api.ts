@@ -6,12 +6,25 @@ import { projectService } from '../services/projects';
 import { adminService } from '../services/admin';
 import { chatbotService } from '../services/chatbot';
 
+// API Response types
+export interface ApiSuccessResponse<T = any> {
+  success: true;
+  data: T;
+}
+
+export interface ApiErrorResponse {
+  success: false;
+  error: string;
+}
+
+export type ApiResponse<T = any> = ApiSuccessResponse<T> | ApiErrorResponse;
+
 // Helper function for error handling
-const handleApiError = (error: any) => {
+const handleApiError = (error: any): ApiErrorResponse => {
   console.error('API error:', error);
   return {
     success: false,
-    error: error.response?.data?.message || error.message || 'An error occurred',
+    error: error.response?.data?.error || error.response?.data?.message || error.message || 'An error occurred',
   };
 };
 
@@ -30,7 +43,7 @@ const getCurrentUser = (): any | null => {
 
 // Auth API
 export const authAPI = {
-  login: async (email: string, password: string) => {
+  login: async (email: string, password: string): Promise<ApiResponse> => {
     try {
       const data = await authService.login({ email, password });
       return { success: true, data };
@@ -45,10 +58,10 @@ export const authAPI = {
     name: string;
     phone: string;
     role: string;
-  }) => {
+  }): Promise<ApiResponse<void>> => {
     try {
       await authService.signup(signupData);
-      return { success: true };
+      return { success: true, data: undefined };
     } catch (error) {
       return handleApiError(error);
     }

@@ -8,30 +8,30 @@ export interface ModificationRequestData {
 
 export const projectService = {
   createModificationRequest: async (data: ModificationRequestData) => {
-    const response = await apiClient.post('/projects/modification-requests', data);
-    return response.data;
+    const response = await apiClient.post('/projects', data);
+    return response.data.data; // Return just the data
   },
 
   getMyModificationRequests: async () => {
-    const response = await apiClient.get('/projects/my-modification-requests');
-    return response.data;
+    const response = await apiClient.get('/projects');
+    return response.data.data; // Return just the data array
   },
 
   deleteModificationRequest: async (requestId: string) => {
-    const response = await apiClient.delete(`/projects/modification-requests/${requestId}`);
-    return response.data;
+    const response = await apiClient.delete(`/projects/${requestId}`);
+    return response.data; // Just success message
   },
 
   getAllModificationRequests: async () => {
-    const response = await apiClient.get('/projects/modification-requests');
-    return response.data;
+    const response = await apiClient.get('/projects');
+    return response.data.data; // Return just the data array
   },
 
   updateModificationStatus: async (projectId: string, status: string, approvedCost?: number) => {
-    const response = await apiClient.patch(`/projects/modification-requests/${projectId}/status`, {
+    const response = await apiClient.patch(`/projects/${projectId}`, {
       status,
       approvedCost
     });
-    return response.data;
+    return response.data.data; // Return just the data
   },
 };

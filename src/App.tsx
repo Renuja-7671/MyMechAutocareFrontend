@@ -7,7 +7,6 @@ import { SignupPage } from './components/auth/SignupPage';
 import { CustomerDashboard } from './components/customer/CustomerDashboard';
 import { EmployeeDashboard } from './components/employee/EmployeeDashboard';
 import { AdminDashboard } from './components/admin/AdminDashboard';
-import { DatabaseCheckPage } from './components/shared/DatabaseCheckPage';
 import { HomePage } from './components/shared/HomePage';
 import { ServicesPage } from './components/pages/ServicesPage';
 import { AboutPage } from './components/pages/AboutPage';
@@ -29,7 +28,6 @@ export default function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/features" element={<FeaturesPage />} />
             <Route path="/contact" element={<ContactPage />} />
-            <Route path="/database-check" element={<DatabaseCheckPage />} />
 
             {/* Protected Routes - Customer Only */}
             <Route

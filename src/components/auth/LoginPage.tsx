@@ -31,12 +31,17 @@ export function LoginPage() {
     try {
       const response = await authAPI.login(email, password);
 
-      if (response.success && response.data) {
-        login(response.data.user, response.data.token);
+      if (response.success) {
+        console.log('Login response data:', response);
+        console.log('User:', response.data.data.user);
+        console.log('Token:', response.data.data.token);
+        // Type narrowing: response.success === true means response has 'data'
+        login(response.data.data.user, response.data.data.token);
         toast.success('Login successful!');
         // Navigate to appropriate dashboard based on role
-        navigate(`/${response.data.user.role}/dashboard`);
+        navigate(`/${response.data.data.user.role}/dashboard`);
       } else {
+        // Type narrowing: response.success === false means response has 'error'
         toast.error(response.error || 'Login failed');
       }
     } catch (error) {
@@ -102,17 +107,8 @@ export function LoginPage() {
               </button>
             </div>
             <div className="pt-3 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/database-check')}
-                className="w-full"
-              >
-                <Database className="mr-2 h-4 w-4" />
-                Check Existing Database
-              </Button>
               <p className="text-xs text-gray-500 mt-2 text-center">
-                Verify your existing data compatibility
+                2025 | WheelsDoc AutoCare. All rights reserved.
               </p>
             </div>
           </div>

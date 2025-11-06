@@ -93,7 +93,7 @@ export function ViewModificationRequestsDialog({
 
   const canDelete = (request: ModificationRequest) => {
     // Can delete if approved and has approved cost (admin has given budget)
-    return request.status.toLowerCase() === 'approved' && request.approvedCost !== null && request.approvedCost !== undefined;
+    return request.status.toLowerCase() === 'pending' && request.approvedCost == null && request.approvedCost == undefined;
   };
 
   return (

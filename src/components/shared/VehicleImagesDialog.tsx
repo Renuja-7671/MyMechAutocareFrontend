@@ -38,9 +38,23 @@ export function VehicleImagesDialog({
     setIsLoading(true);
     try {
       const imageData = await vehicleService.getVehicleImages(vehicle.id);
-      if (imageData.exterior_image_1) setExteriorImage1Url(imageData.exterior_image_1);
-      if (imageData.exterior_image_2) setExteriorImage2Url(imageData.exterior_image_2);
-      if (imageData.interior_image) setInteriorImageUrl(imageData.interior_image);
+      console.log('Loaded image data:', imageData);
+
+      // Backend returns { exteriorImages: [...], interiorImage: '...' }
+      if (imageData.exteriorImages && imageData.exteriorImages.length > 0) {
+        setExteriorImage1Url(imageData.exteriorImages[0]);
+        if (imageData.exteriorImages.length > 1) {
+          setExteriorImage2Url(imageData.exteriorImages[1]);
+        }
+      }else {
+        setExteriorImage1Url(null);
+        setExteriorImage2Url(null);
+      }
+      if (imageData.interiorImage) {
+        setInteriorImageUrl(imageData.interiorImage);
+      } else {
+        setInteriorImageUrl(null);
+      }
     } catch (error) {
       console.error('Error loading vehicle images:', error);
     } finally {
@@ -48,7 +62,7 @@ export function VehicleImagesDialog({
     }
   };
 
-  const hasImages = vehicle.exterior_image_1 || vehicle.exterior_image_2 || vehicle.interior_image;
+  const hasImages = exteriorImage1Url || exteriorImage2Url || interiorImageUrl;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -63,7 +77,7 @@ export function VehicleImagesDialog({
         </DialogHeader>
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-12" >
             <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
           </div>
         ) : !hasImages ? (
@@ -74,16 +88,16 @@ export function VehicleImagesDialog({
         ) : (
           <Tabs defaultValue="exterior" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="exterior" disabled={!vehicle.exterior_image_1 && !vehicle.exterior_image_2}>
-                Exterior ({[vehicle.exterior_image_1, vehicle.exterior_image_2].filter(Boolean).length})
+              <TabsTrigger value="exterior" disabled={!exteriorImage1Url && !exteriorImage2Url}>
+                Exterior ({[exteriorImage1Url, exteriorImage2Url].filter(Boolean).length})
               </TabsTrigger>
-              <TabsTrigger value="interior" disabled={!vehicle.interior_image}>
-                Interior ({vehicle.interior_image ? 1 : 0})
+              <TabsTrigger value="interior" disabled={!interiorImageUrl}>
+                Interior ({interiorImageUrl ? 1 : 0})
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="exterior" className="space-y-4 mt-4">
-              {!vehicle.exterior_image_1 && !vehicle.exterior_image_2 ? (
+              {!exteriorImage1Url && !exteriorImage1Url? (
                 <div className="flex items-center justify-center py-8 text-muted-foreground">
                   <p>No exterior images available</p>
                 </div>
@@ -114,7 +128,7 @@ export function VehicleImagesDialog({
             </TabsContent>
 
             <TabsContent value="interior" className="mt-4">
-              {!vehicle.interior_image ? (
+              {!interiorImageUrl ? (
                 <div className="flex items-center justify-center py-8 text-muted-foreground">
                   <p>No interior image available</p>
                 </div>

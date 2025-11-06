@@ -17,7 +17,6 @@ import { ServiceChatbot } from './ServiceChatbot';
 import { AddVehicleDialog } from './AddVehicleDialog';
 import { ViewServiceHistoryDialog } from './ViewServiceHistoryDialog';
 import { VehicleImagesDialog } from '../shared/VehicleImagesDialog';
-import { StorageDiagnostic } from '../shared/StorageDiagnostic';
 
 interface Service {
   id: string;
@@ -70,15 +69,43 @@ export function CustomerDashboard() {
   }, []);
 
   const loadData = async () => {
-    const [servicesRes, appointmentsRes, vehiclesRes] = await Promise.all([
-      customerAPI.getServiceProgress(),
-      customerAPI.getAppointments(),
-      customerAPI.getVehicles(),
-    ]);
+    try {
+      const [servicesRes, appointmentsRes, vehiclesRes] = await Promise.all([
+        customerAPI.getServiceProgress(),
+        customerAPI.getAppointments(),
+        customerAPI.getVehicles(),
+      ]);
 
-    if (servicesRes.success) setServices(servicesRes.data || []);
-    if (appointmentsRes.success) setAppointments(appointmentsRes.data || []);
-    if (vehiclesRes.success) setVehicles(vehiclesRes.data || []);
+      console.log('Services response:', servicesRes);
+      console.log('Appointments response:', appointmentsRes);
+      console.log('Vehicles response:', vehiclesRes);
+
+      if (servicesRes.success && Array.isArray(servicesRes.data)) {
+        setServices(servicesRes.data);
+      } else {
+        console.error('Services data is not an array:', servicesRes);
+        setServices([]);
+      }
+
+      if (appointmentsRes.success && Array.isArray(appointmentsRes.data)) {
+        setAppointments(appointmentsRes.data);
+      } else {
+        console.error('Appointments data is not an array:', appointmentsRes);
+        setAppointments([]);
+      }
+
+      if (vehiclesRes.success && Array.isArray(vehiclesRes.data)) {
+        setVehicles(vehiclesRes.data);
+      } else {
+        console.error('Vehicles data is not an array:', vehiclesRes);
+        setVehicles([]);
+      }
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+      setServices([]);
+      setAppointments([]);
+      setVehicles([]);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -118,7 +145,7 @@ export function CustomerDashboard() {
           <div className="flex gap-3">
             <Button onClick={() => setShowChatbot(true)} variant="outline" className="gap-2">
               <MessageSquare className="h-4 w-4" />
-              Check Slots
+              AI Slot Checker
             </Button>
             <Button onClick={() => setShowViewModifications(true)} variant="outline" className="gap-2">
               <FileText className="h-4 w-4" />
@@ -271,11 +298,6 @@ export function CustomerDashboard() {
           </TabsContent>
 
           <TabsContent value="vehicles" className="space-y-4">
-            {/* Temporary Diagnostic Tool */}
-            <div className="mb-6">
-              <StorageDiagnostic />
-            </div>
-
             <div className="flex justify-end mb-4">
               <Button onClick={() => setShowAddVehicle(true)} className="gap-2">
                 <Plus className="h-4 w-4" />

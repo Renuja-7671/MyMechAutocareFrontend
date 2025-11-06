@@ -49,11 +49,13 @@ export function SignupPage() {
       const { confirmPassword, ...signupData } = formData;
       // Public signup is always for customers
       const response = await authAPI.signup({ ...signupData, role: 'customer' });
-      
+
       if (response.success) {
+        // Type narrowing: response.success === true
         toast.success('Account created successfully! Please sign in.');
         navigate('/login');
       } else {
+        // Type narrowing: response.success === false means response has 'error'
         toast.error(response.error || 'Signup failed');
       }
     } catch (error) {

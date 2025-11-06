@@ -38,7 +38,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = (userData: User, token: string) => {
+    console.log('AuthContext login called with user:', userData, 'token:', token);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('authToken', token);
     setUser(userData);
   };
 

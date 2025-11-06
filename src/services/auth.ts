@@ -15,6 +15,7 @@ export interface SignupData {
 
 export const authService = {
   login: async (data: LoginData) => {
+    console.log('Logging in with data:', data);
     const response = await apiClient.post('/auth/login', data);
     return response.data;
   },
