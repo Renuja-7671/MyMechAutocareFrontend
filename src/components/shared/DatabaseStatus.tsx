@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { runDatabaseDiagnostic, printDiagnosticReport, DiagnosticReport } from '../../lib/database-diagnostic';
+import { runDatabaseDiagnostic, printDiagnosticReport, DiagnosticReport } from '../../lib/database-diagnostic-api';
 import { checkDatabaseSetup } from '../../lib/data-compatibility-api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
