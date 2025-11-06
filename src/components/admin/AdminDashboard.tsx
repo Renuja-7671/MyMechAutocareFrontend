@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { adminAPI } from '../../lib/api';
 import { Header } from '../shared/Header';
+import { useAuth } from '../../lib/auth-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Users, ClipboardList, Calendar, TrendingUp, BarChart3, Bug, Wrench } from 'lucide-react';
@@ -20,11 +22,9 @@ interface DashboardStats {
   revenue: number;
 }
 
-interface AdminDashboardProps {
-  onGoHome?: () => void;
-}
-
-export function AdminDashboard({ onGoHome }: AdminDashboardProps) {
+export function AdminDashboard() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     totalCustomers: 0,
     totalEmployees: 0,
@@ -43,6 +43,11 @@ export function AdminDashboard({ onGoHome }: AdminDashboardProps) {
     if (response.success && response.data) {
       setStats(response.data);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   const statCards = [
@@ -92,7 +97,7 @@ export function AdminDashboard({ onGoHome }: AdminDashboardProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      <Header onGoHome={onGoHome} />
+      <Header onGoHome={handleLogout} />
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">

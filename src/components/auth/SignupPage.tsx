@@ -1,21 +1,17 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../../lib/api';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { PasswordInput } from '../ui/password-input';
 import { Label } from '../ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
+import { Navbar } from '../common/Navbar';
 
-import { toast } from 'sonner@2.0.3';
-import { Loader2, Home } from 'lucide-react';
-import logo from 'figma:asset/1e334aef77be8b1884333118e444c25de1ffa1e9.png';
-
-interface SignupPageProps {
-  onSwitchToLogin: () => void;
-  onGoHome?: () => void;
-}
-
-export function SignupPage({ onSwitchToLogin, onGoHome }: SignupPageProps) {
+export function SignupPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -56,7 +52,7 @@ export function SignupPage({ onSwitchToLogin, onGoHome }: SignupPageProps) {
       
       if (response.success) {
         toast.success('Account created successfully! Please sign in.');
-        onSwitchToLogin();
+        navigate('/login');
       } else {
         toast.error(response.error || 'Signup failed');
       }
@@ -68,25 +64,16 @@ export function SignupPage({ onSwitchToLogin, onGoHome }: SignupPageProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          {onGoHome && (
-            <div className="flex justify-start mb-2">
-              <Button variant="ghost" size="sm" onClick={onGoHome}>
-                <Home className="mr-2 h-4 w-4" />
-                Back to Home
-              </Button>
-            </div>
-          )}
-          <div className="flex items-center justify-center mb-4">
-            <img src={logo} alt="WheelsDoc AutoCare" className="h-24 w-auto" />
-          </div>
-          <CardTitle className="text-2xl">Create an Account</CardTitle>
-          <CardDescription>
-            Join WheelsDoc AutoCare to manage your vehicle services
-          </CardDescription>
-        </CardHeader>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      <Navbar variant="minimal" showAuthButtons={false} />
+      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1 text-center">
+            <CardTitle className="text-2xl">Create an Account</CardTitle>
+            <CardDescription>
+              Join WheelsDoc AutoCare to manage your vehicle services
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -156,7 +143,7 @@ export function SignupPage({ onSwitchToLogin, onGoHome }: SignupPageProps) {
           <div className="mt-4 text-center">
             <button
               type="button"
-              onClick={onSwitchToLogin}
+              onClick={() => navigate('/login')}
               className="text-blue-600 hover:underline"
             >
               Already have an account? Sign in
@@ -164,6 +151,7 @@ export function SignupPage({ onSwitchToLogin, onGoHome }: SignupPageProps) {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

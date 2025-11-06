@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { toast } from 'sonner@2.0.3';
-import logo from 'figma:asset/1e334aef77be8b1884333118e444c25de1ffa1e9.png';
+import logo from '../../assets/logo.png';
 
 interface HeaderProps {
   onGoHome?: () => void;

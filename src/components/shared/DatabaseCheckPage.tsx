@@ -1,18 +1,16 @@
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DatabaseStatus } from './DatabaseStatus';
 import { Button } from '../ui/button';
 import { ArrowLeft } from 'lucide-react';
 
-interface DatabaseCheckPageProps {
-  onBack: () => void;
-}
+export function DatabaseCheckPage() {
+  const navigate = useNavigate();
 
-export function DatabaseCheckPage({ onBack }: DatabaseCheckPageProps) {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <Button variant="ghost" onClick={onBack} className="mb-4">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Login
           </Button>

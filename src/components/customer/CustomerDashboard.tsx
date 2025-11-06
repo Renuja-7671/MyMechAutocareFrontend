@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { customerAPI } from '../../lib/api';
 import { formatStatusText } from '../../lib/types';
 import { Header } from '../shared/Header';
+import { useAuth } from '../../lib/auth-context';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
@@ -48,11 +50,9 @@ interface Vehicle {
   interior_image?: string | null;
 }
 
-interface CustomerDashboardProps {
-  onGoHome?: () => void;
-}
-
-export function CustomerDashboard({ onGoHome }: CustomerDashboardProps) {
+export function CustomerDashboard() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [services, setServices] = useState<Service[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -100,9 +100,14 @@ export function CustomerDashboard({ onGoHome }: CustomerDashboardProps) {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      <Header onGoHome={onGoHome} />
+      <Header onGoHome={handleLogout} />
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">

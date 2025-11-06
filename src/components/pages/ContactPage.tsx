@@ -1,21 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
-import { ThemeToggle } from '../ui/theme-toggle';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
-import logo from 'figma:asset/1e334aef77be8b1884333118e444c25de1ffa1e9.png';
+import { toast } from 'sonner';
+import { Navbar } from '../common/Navbar';
 
-interface ContactPageProps {
-  onGoHome: () => void;
-  onLogin: () => void;
-  onSignup: () => void;
-}
-
-export function ContactPage({ onGoHome, onLogin, onSignup }: ContactPageProps) {
+export function ContactPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -74,29 +69,7 @@ export function ContactPage({ onGoHome, onLogin, onSignup }: ContactPageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Header */}
-      <header className="sticky top-0 z-50 py-4 bg-background/80 backdrop-blur-sm border-b">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <button onClick={onGoHome} className="flex items-center gap-3 bg-background rounded-full px-6 py-3 shadow-md hover:shadow-lg transition-shadow border">
-              <img src={logo} alt="WheelsDoc AutoCare" className="h-10 w-auto" />
-              <div>
-                <h1 className="text-lg">WheelsDoc AutoCare</h1>
-              </div>
-            </button>
-          
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
-              <Button onClick={onLogin} variant="ghost" size="sm" className="rounded-full">
-                Sign In
-              </Button>
-              <Button onClick={onSignup} size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">
-                Get Started
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16 text-center">
@@ -249,10 +222,10 @@ export function ContactPage({ onGoHome, onLogin, onSignup }: ContactPageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center gap-4 pb-8">
-            <Button size="lg" onClick={onSignup} className="bg-white text-blue-600 hover:bg-gray-100">
+            <Button size="lg" onClick={() => navigate('/signup')} className="bg-white text-blue-600 hover:bg-gray-100">
               Create Account
             </Button>
-            <Button size="lg" variant="outline" onClick={onLogin} className="border-white text-white hover:bg-white/10">
+            <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="border-white text-white hover:bg-white/10">
               Sign In
             </Button>
           </CardContent>

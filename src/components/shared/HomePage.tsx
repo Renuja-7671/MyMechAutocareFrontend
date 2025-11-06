@@ -1,101 +1,25 @@
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../lib/auth-context';
 import { Button } from '../ui/button';
-import { ThemeToggle } from '../ui/theme-toggle';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Car, Wrench, Clock, Users, ArrowRight, LogOut, LayoutDashboard } from 'lucide-react';
-import logo from 'figma:asset/1e334aef77be8b1884333118e444c25de1ffa1e9.png';
+import { Car, Wrench, Clock, Users, ArrowRight, LayoutDashboard } from 'lucide-react';
+import logo from '../../assets/logo.png';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
+import { Navbar } from '../common/Navbar';
 
-interface HomePageProps {
-  onLogin: () => void;
-  onSignup: () => void;
-  onDashboard?: () => void;
-  onServices: () => void;
-  onAbout: () => void;
-  onFeatures: () => void;
-  onContact: () => void;
-}
+export function HomePage() {
+  const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
 
-export function HomePage({ onLogin, onSignup, onDashboard, onServices, onAbout, onFeatures, onContact }: HomePageProps) {
-  const { user, isAuthenticated, logout } = useAuth();
+  const handleDashboard = () => {
+    if (user?.role) {
+      navigate(`/${user.role}/dashboard`);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      {/* Header */}
-      <header className="sticky top-0 z-50 py-4">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            {/* Logo - Outside the pill */}
-            <div className="flex items-center gap-3 bg-background rounded-full px-6 py-3 shadow-md border">
-              <img src={logo} alt="WheelsDoc AutoCare" className="h-10 w-auto" />
-              <div>
-                <h1 className="text-lg">WheelsDoc AutoCare</h1>
-              </div>
-            </div>
-          
-            {/* Navigation Pill */}
-            <nav className="flex items-center gap-2 bg-card rounded-full px-8 py-3 shadow-lg border">
-              <ThemeToggle />
-              {isAuthenticated ? (
-                <>
-                  <span className="text-sm text-muted-foreground px-4">
-                    Welcome, <span className="font-medium text-foreground">{user?.name}</span>
-                  </span>
-                  {onDashboard && (
-                    <button 
-                      onClick={onDashboard}
-                      className="px-4 py-2 text-sm hover:text-primary transition-colors"
-                    >
-                      Dashboard
-                    </button>
-                  )}
-                  <button 
-                    onClick={logout}
-                    className="px-4 py-2 text-sm hover:text-primary transition-colors"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button 
-                    onClick={onServices}
-                    className="px-4 py-2 text-sm hover:text-primary transition-colors"
-                  >
-                    Services
-                  </button>
-                  <button 
-                    onClick={onAbout}
-                    className="px-4 py-2 text-sm hover:text-primary transition-colors"
-                  >
-                    About
-                  </button>
-                  <button 
-                    onClick={onFeatures}
-                    className="px-4 py-2 text-sm hover:text-primary transition-colors"
-                  >
-                    Features
-                  </button>
-                  <button 
-                    onClick={onContact}
-                    className="px-4 py-2 text-sm hover:text-primary transition-colors"
-                  >
-                    Contact
-                  </button>
-                  <div className="flex items-center gap-2 ml-2 pl-2 border-l border-border">
-                    <Button onClick={onLogin} variant="ghost" size="sm" className="rounded-full">
-                      Sign In
-                    </Button>
-                    <Button onClick={onSignup} size="sm" className="rounded-full">
-                      Get Started
-                    </Button>
-                  </div>
-                </>
-              )}
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
@@ -123,18 +47,18 @@ export function HomePage({ onLogin, onSignup, onDashboard, onServices, onAbout, 
             
             {!isAuthenticated && (
               <div className="flex gap-4 justify-center">
-                <Button size="lg" onClick={onSignup} className="text-lg px-8">
+                <Button size="lg" onClick={() => navigate('/signup')} className="text-lg px-8">
                   Get Started
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" onClick={onLogin} className="text-lg px-8">
+                <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="text-lg px-8">
                   Sign In
                 </Button>
               </div>
             )}
 
-            {isAuthenticated && onDashboard && (
-              <Button size="lg" onClick={onDashboard} className="text-lg px-8">
+            {isAuthenticated && (
+              <Button size="lg" onClick={handleDashboard} className="text-lg px-8">
                 <LayoutDashboard className="mr-2 h-5 w-5" />
                 Go to My Dashboard
               </Button>
@@ -262,11 +186,11 @@ export function HomePage({ onLogin, onSignup, onDashboard, onServices, onAbout, 
               Join WheelsDoc AutoCare today and streamline your vehicle service operations.
             </p>
             <div className="flex gap-4 justify-center">
-              <Button size="lg" onClick={onSignup} className="text-lg px-8">
+              <Button size="lg" onClick={() => navigate('/signup')} className="text-lg px-8">
                 Create Account
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button size="lg" variant="outline" onClick={onLogin} className="text-lg px-8">
+              <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="text-lg px-8">
                 Sign In
               </Button>
             </div>

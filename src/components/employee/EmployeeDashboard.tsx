@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { employeeAPI } from '../../lib/api';
 import { formatStatusText } from '../../lib/types';
 import { Header } from '../shared/Header';
+import { useAuth } from '../../lib/auth-context';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
@@ -42,11 +44,9 @@ interface TimeLog {
   date: string;
 }
 
-interface EmployeeDashboardProps {
-  onGoHome?: () => void;
-}
-
-export function EmployeeDashboard({ onGoHome }: EmployeeDashboardProps) {
+export function EmployeeDashboard() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [services, setServices] = useState<Service[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [timeLogs, setTimeLogs] = useState<TimeLog[]>([]);
@@ -99,9 +99,14 @@ export function EmployeeDashboard({ onGoHome }: EmployeeDashboardProps) {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      <Header onGoHome={onGoHome} />
+      <Header onGoHome={handleLogout} />
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
