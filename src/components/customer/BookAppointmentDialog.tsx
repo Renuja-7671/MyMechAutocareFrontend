@@ -6,7 +6,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
 interface BookAppointmentDialogProps {
@@ -73,7 +73,7 @@ export function BookAppointmentDialog({
           description: '',
         });
       } else {
-        toast.error(response.error || 'Failed to book appointment');
+        toast.error((response as any).error || 'Failed to book appointment');
       }
     } catch (error) {
       toast.error('An error occurred. Please try again.');
@@ -96,7 +96,7 @@ export function BookAppointmentDialog({
             <Label htmlFor="vehicle">Select Vehicle *</Label>
             <Select
               value={formData.vehicleId}
-              onValueChange={(value) => handleChange('vehicleId', value)}
+              onValueChange={(value:string) => handleChange('vehicleId', value)}
               disabled={isLoading}
             >
               <SelectTrigger id="vehicle">
@@ -116,7 +116,7 @@ export function BookAppointmentDialog({
             <Label htmlFor="serviceType">Service Type *</Label>
             <Select
               value={formData.serviceType}
-              onValueChange={(value) => handleChange('serviceType', value)}
+              onValueChange={(value:string) => handleChange('serviceType', value)}
               disabled={isLoading}
             >
               <SelectTrigger id="serviceType">

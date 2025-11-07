@@ -7,7 +7,7 @@ import { Separator } from '../ui/separator';
 import { Calendar, Clock, IndianRupee, Wrench, User, Package, FileText } from 'lucide-react';
 import { customerAPI } from '../../lib/api';
 import { formatStatusText } from '../../lib/types';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 interface ServiceHistoryDialogProps {
   open: boolean;
@@ -56,7 +56,7 @@ export function ViewServiceHistoryDialog({
       if (response.success) {
         setServiceHistory(response.data || []);
       } else {
-        toast.error(response.error || 'Failed to load service history');
+        toast.error((response as any).error || 'Failed to load service history');
       }
     } catch (error) {
       toast.error('An error occurred while loading service history');

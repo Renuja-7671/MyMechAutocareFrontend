@@ -6,7 +6,7 @@ import { Badge } from '../ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { Wrench, Calendar, IndianRupee, AlertCircle, Trash2, FileText } from 'lucide-react';
 import { customerAPI } from '../../lib/api';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { formatStatusText } from '../../lib/types';
 
 interface ModificationRequest {

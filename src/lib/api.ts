@@ -12,12 +12,17 @@ export interface ApiSuccessResponse<T = any> {
   data: T;
 }
 
+export interface ApiSuccessResponseNoData {
+  success: true;
+}
+
 export interface ApiErrorResponse {
   success: false;
   error: string;
 }
 
 export type ApiResponse<T = any> = ApiSuccessResponse<T> | ApiErrorResponse;
+export type ApiResponseVoid = ApiSuccessResponseNoData | ApiErrorResponse;
 
 // Helper function for error handling
 const handleApiError = (error: any): ApiErrorResponse => {
@@ -181,7 +186,7 @@ export const customerAPI = {
     }
   },
 
-  deleteModificationRequest: async (requestId: string) => {
+  deleteModificationRequest: async (requestId: string): Promise<ApiResponseVoid> => {
     try {
       await projectService.deleteModificationRequest(requestId);
       return { success: true };
@@ -227,7 +232,7 @@ export const employeeAPI = {
 
   getUpcomingAppointments: async () => {
     try {
-      const data = await appointmentService.getUpcomingAppointments();
+      const data = await employeeService.getUpcomingAppointments();
       return { success: true, data };
     } catch (error) {
       return handleApiError(error);
@@ -264,7 +269,7 @@ export const adminAPI = {
     }
   },
 
-  deleteUser: async (userId: string) => {
+  deleteUser: async (userId: string): Promise<ApiResponseVoid> => {
     try {
       await adminService.deleteUser(userId);
       return { success: true };
