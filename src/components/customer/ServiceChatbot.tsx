@@ -222,11 +222,25 @@ export const ServiceChatbot = ({ open, onOpenChange }: ServiceChatbotProps = {})
 
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl rounded-bl-none px-4 py-3">
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <span
+                        className="w-2.5 h-2.5 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full animate-pulse"
+                        style={{ animationDelay: '0ms', animationDuration: '1s' }}
+                      ></span>
+                      <span
+                        className="w-2.5 h-2.5 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full animate-pulse"
+                        style={{ animationDelay: '200ms', animationDuration: '1s' }}
+                      ></span>
+                      <span
+                        className="w-2.5 h-2.5 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full animate-pulse"
+                        style={{ animationDelay: '400ms', animationDuration: '1s' }}
+                      ></span>
+                    </div>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 ml-1 animate-pulse">
+                      Thinking...
+                    </span>
                   </div>
                 </div>
               </div>

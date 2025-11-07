@@ -91,7 +91,7 @@ export function RequestModificationDialog({
               </SelectTrigger>
               <SelectContent>
                 {vehicles.map((vehicle) => (
-                  <SelectItem key={vehicle.id} value={vehicle.id}>
+                  <SelectItem key={vehicle.id} value={vehicle.id.toString()}>
                     {vehicle.year} {vehicle.make} {vehicle.model}
                   </SelectItem>
                 ))}
