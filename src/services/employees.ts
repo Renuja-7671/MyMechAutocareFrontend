@@ -22,6 +22,11 @@ export const employeeService = {
     return response.data.data; // Backend returns { success: true, data: [...] }
   },
 
+  getUpcomingAppointments: async () => {
+    const response = await apiClient.get('/employees/upcoming-appointments');
+    return response.data.data; // Backend returns { success: true, data: [...] }
+  },
+
   logTime: async (data: TimeLogData) => {
     const response = await apiClient.post('/employees/time-logs', data);
     return response.data.data; // Backend returns { success: true, data: {...} }

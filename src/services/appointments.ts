@@ -38,4 +38,11 @@ export const appointmentService = {
     const response = await apiClient.get('/appointments/upcoming');
     return response.data.data; // Return just the data
   },
+
+  getAvailableTimeSlots: async (date: string) => {
+    const response = await apiClient.get('/appointments/available-slots', {
+      params: { date },
+    });
+    return response.data.data; // Return just the data
+  },
 };

@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { Loader2, Upload, X, Image as ImageIcon } from 'lucide-react';
 
 interface AddVehicleDialogProps {
@@ -142,7 +142,7 @@ export function AddVehicleDialog({
         setExteriorPreviews([]);
         setInteriorPreview(null);
       } else {
-        toast.error(response.error || 'Failed to add vehicle');
+        toast.error((response as any).error || 'Failed to add vehicle');
       }
     } catch (error) {
       toast.error('An error occurred. Please try again.');

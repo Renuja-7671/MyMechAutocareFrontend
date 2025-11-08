@@ -4,9 +4,9 @@ import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
-import { Wrench, Calendar, IndianRupee, AlertCircle, Trash2, FileText } from 'lucide-react';
+import { Wrench, Calendar, DollarSign, AlertCircle, Trash2, FileText } from 'lucide-react';
 import { customerAPI } from '../../lib/api';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { formatStatusText } from '../../lib/types';
 
 interface ModificationRequest {
@@ -15,6 +15,7 @@ interface ModificationRequest {
   description: string;
   estimatedCost: number;
   approvedCost?: number | null;
+  actualCost?: number | null;
   status: string;
   createdAt: string;
 }
@@ -92,8 +93,8 @@ export function ViewModificationRequestsDialog({
   };
 
   const canDelete = (request: ModificationRequest) => {
-    // Can delete if approved and has approved cost (admin has given budget)
-    return request.status.toLowerCase() === 'pending' && request.approvedCost == null && request.approvedCost == undefined;
+    // Can delete if status is approved and has approved cost (admin has given budget)
+    return request.status.toLowerCase() === 'approved' && request.approvedCost != null && request.approvedCost != undefined;
   };
 
   return (
@@ -169,25 +170,43 @@ export function ViewModificationRequestsDialog({
                     </div>
 
                     {/* Cost Information */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className={`grid grid-cols-1 gap-4 ${
+                      request.actualCost !== null && request.actualCost !== undefined
+                        ? 'md:grid-cols-3'
+                        : request.approvedCost !== null && request.approvedCost !== undefined
+                        ? 'md:grid-cols-2'
+                        : 'md:grid-cols-1'
+                    }`}>
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm font-medium">
-                          <IndianRupee className="h-4 w-4 text-muted-foreground" />
+                          <DollarSign className="h-4 w-4 text-muted-foreground" />
                           Your Estimated Budget
                         </div>
                         <p className="text-lg pl-6">
-                          Rs. {request.estimatedCost.toLocaleString()}
+                          LKR {request.estimatedCost.toLocaleString()}
                         </p>
                       </div>
 
                       {request.approvedCost !== null && request.approvedCost !== undefined && (
                         <div className="space-y-2">
                           <div className="flex items-center gap-2 text-sm font-medium">
-                            <IndianRupee className="h-4 w-4 text-green-600" />
+                            <DollarSign className="h-4 w-4 text-green-600" />
                             Admin Approved Budget
                           </div>
                           <p className="text-lg text-green-600 dark:text-green-400 pl-6">
-                            Rs. {request.approvedCost.toLocaleString()}
+                            LKR {request.approvedCost.toLocaleString()}
+                          </p>
+                        </div>
+                      )}
+
+                      {request.actualCost !== null && request.actualCost !== undefined && (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-sm font-medium">
+                            <DollarSign className="h-4 w-4 text-blue-600" />
+                            Actual Cost
+                          </div>
+                          <p className="text-lg text-blue-600 dark:text-blue-400 pl-6 font-semibold">
+                            LKR {request.actualCost.toLocaleString()}
                           </p>
                         </div>
                       )}
@@ -211,7 +230,7 @@ export function ViewModificationRequestsDialog({
                           <div className="text-sm text-orange-800 dark:text-orange-200">
                             <p className="font-medium">Ready for your decision</p>
                             <p className="text-orange-700 dark:text-orange-300 mt-1">
-                              The admin has approved your request with a budget of Rs. {request.approvedCost?.toLocaleString()}.
+                              The admin has approved your request with a budget of LKR {request.approvedCost?.toLocaleString()}.
                               You can delete this request if you don't wish to proceed with the approved budget.
                             </p>
                           </div>
@@ -249,7 +268,7 @@ export function ViewModificationRequestsDialog({
               </p>
               {selectedRequest?.approvedCost && (
                 <p className="text-orange-600 dark:text-orange-400 font-medium">
-                  The admin has approved this request with a budget of Rs. {selectedRequest.approvedCost.toLocaleString()}.
+                  The admin has approved this request with a budget of LKR {selectedRequest.approvedCost.toLocaleString()}.
                   Deleting means you're declining to proceed with this modification.
                 </p>
               )}

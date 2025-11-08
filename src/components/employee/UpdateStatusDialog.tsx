@@ -6,7 +6,7 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 import { Slider } from '../ui/slider';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
 interface UpdateStatusDialogProps {
@@ -111,7 +111,7 @@ export function UpdateStatusDialog({
         });
         setUserSelectedStatus(false);
       } else {
-        toast.error(response.error || 'Failed to update status');
+        toast.error((response as any).error || 'Failed to update status');
       }
     } catch (error) {
       toast.error('An error occurred. Please try again.');

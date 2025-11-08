@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
 interface LogTimeDialogProps {
@@ -70,7 +70,7 @@ export function LogTimeDialog({
           date: new Date().toISOString().split('T')[0],
         });
       } else {
-        toast.error(response.error || 'Failed to log time');
+        toast.error((response as any).error || 'Failed to log time');
       }
     } catch (error) {
       toast.error('An error occurred. Please try again.');
